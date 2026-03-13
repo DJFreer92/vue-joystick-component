@@ -39,6 +39,8 @@ export interface JoystickComponentProps {
   controlPlaneShape?: JoystickComponent.Shape
   /** The minimum distance to travel before triggering the `move` event between 0 - 100 (default: `0`) */
   minDistance?: number
+  /** Whether the joystick stick should snap to the cursor position on the base on input (default: `false`) */
+  snapToInput?: boolean
 }
 
 const props = withDefaults(defineProps<JoystickComponentProps>(), {
@@ -56,6 +58,7 @@ const props = withDefaults(defineProps<JoystickComponentProps>(), {
   stickShape: JoystickComponent.Shape.Circle,
   controlPlaneShape: JoystickComponent.Shape.Circle,
   minDistance: 0,
+  snapToInput: false,
 })
 
 const emit = defineEmits<{
@@ -192,6 +195,17 @@ const _updatePos = (coordinates: JoystickComponent.Coordinates) => {
     direction: coordinates.direction,
     distance: coordinates.distance,
   })
+}
+
+/**
+ * Handle pointer down on the base - Move the stick to the pointer position if snapToInput is enabled
+ * @param e PointerEvent
+ */
+const _pointerDownBase = (e: PointerEvent) => {
+  if (!props.snapToInput) return;
+
+  _pointerDown(e);
+  _pointerMove(e);
 }
 
 /**
@@ -364,6 +378,7 @@ onBeforeUnmount(() => _followStop())
     class="joystick"
     :class="{ 'joystick--disabled': props.disabled }"
     :style="baseStyle"
+    @pointerdown="_pointerDownBase"
   >
     <button
       ref="stickRef"
