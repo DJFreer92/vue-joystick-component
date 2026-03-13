@@ -86,6 +86,8 @@ interface JoystickComponentProps {
   controlPlaneShape?: JoystickComponent.Shape
   /** The minimum distance to travel before triggering the `move` event between 0 - 100 (default: `0`) */
   minDistance?: number
+  /** Whether the joystick stick should snap to the cursor position on the base on input (default: `false`) */
+  snapToInput?: boolean
 }
 ```
 
